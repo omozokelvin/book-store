@@ -1,67 +1,19 @@
 const express = require('express');
+const bookController = require('../controllers/bookController');
+const bookService = require('../services/goodreadsService');
 
 const bookRouter = express.Router();
 
 function router(nav) {
-  const books = [
-    {
-      title: 'War and Peace',
-      genres: 'Historical Fiction',
-      author: 'Lev Nikolayevich Tolstoy',
-      read: false
-    },
-    {
-      title: 'Les Miserables',
-      genres: 'Historical Fiction',
-      author: 'Victor Nugo',
-      read: false
-    },
-    {
-      title: 'The Time Machine',
-      genres: 'Science Fiction',
-      author: 'H. G. Wells',
-      read: false
-    },
-    {
-      title: 'A Journey into the Center of the Earth',
-      genres: 'Science Fiction',
-      author: 'Jules Verne',
-      read: false
-    },
-    {
-      title: 'The Dark World',
-      genres: 'Fantasy',
-      author: 'Henry Kuttner',
-      read: false
-    },
-  ];
+  const { getIndex, getById, middleware } = bookController(bookService, nav);
+
+  bookRouter.use(middleware);
 
   bookRouter.route('/')
-    .get((req, res) => {
-      // res.sendFile(path.join(__dirname, '/views/', 'index.html'));
-      res.render(
-        'bookListView',
-        {
-          nav,
-          title: 'Library',
-          books
-        }
-      );
-    });
+    .get(getIndex);
 
   bookRouter.route('/:id')
-    .get((req, res) => {
-      const { id } = req.params;
-
-      res.render(
-        'bookView',
-        {
-          nav,
-          title: 'Library',
-          book: books[id]
-        }
-      );
-    });
+    .get(getById);
 
   return bookRouter;
 }
